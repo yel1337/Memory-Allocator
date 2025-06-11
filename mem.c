@@ -1,5 +1,6 @@
 #include <stdio.h> 
 #include <stdlib.h> 
+#include <unistd.h> 
 #include "mem.h"
 
 header_t *head, *tail; 
@@ -11,9 +12,14 @@ void *malloc(size_t size)
 	/*
 	 * Take a chunk of memory to heap with the given size
 	 * 
+	 * In this intance we allocate a space in heap for
+	 * the header along with a usable memory and 
+	 * metadata
+	 *
 	 * sbrk() allocates in the heap
 	 */
-	block = sbrk(size);
+	size_t header_block_size = sizeof(header_t) + size; 
+	block = sbrk(header_block_size);
 
 	/* On failure, sbrk() returns (void*) -1 */ 
 	if (block == (void*) -1) {
